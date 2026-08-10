@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="이유식 재고">
+<meta name="theme-color" content="#f5b301">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<link rel="manifest" href="manifest.json">
+<title>이유식 식재료 재고</title>
+<style>
+:root{
+  --bg:#faf8f4; --card:#fff; --line:#e9e4da; --text:#2c2a26; --sub:#8b857a;
+  --accent:#f5b301; --accent-dark:#d99b00; --minus:#e8785a; --plus:#4caf7d;
+  --danger:#d9534f; --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#17161a; --card:#232228; --line:#35333b; --text:#f1efe9; --sub:#a09a90; }
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text); font-size:16px;
+  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) calc(env(safe-area-inset-bottom) + 90px) env(safe-area-inset-left);
+}
+.wrap{max-width:720px;margin:0 auto;padding:14px}
+header{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
+header h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.5px;flex:1}
+.icon-btn{
+  width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+  color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer
+}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--sub);display:inline-block;margin-right:6px}
+.sync-dot.dirty{background:var(--minus)}
+.sync-dot.clean{background:var(--plus)}
+.status{font-size:12px;color:var(--sub);margin:-8px 0 12px;display:flex;align-items:center}
+
+.toolbar{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.search{position:relative}
+.search input{
+  width:100%;padding:12px 38px 12px 38px;border-radius:var(--radius);border:1px solid var(--line);
+  background:var(--card);color:var(--text);font-size:16px;outline:none
+}
+.search .mag{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:15px}
+.search .clr{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--sub);font-size:18px;padding:6px;cursor:pointer}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{
+  padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);
+  color:var(--sub);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap
+}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#3a2c00}
+.chip.small{padding:6px 10px;font-size:12px}
+.spacer{flex:1}
+
+table{width:100%;border-collapse:separate;border-spacing:0 8px}
+thead th{
+  font-size:12px;color:var(--sub);font-weight:700;text-align:left;padding:0 10px 2px;cursor:pointer;user-select:none
+}
+thead th.num{text-align:center}
+tbody tr{background:var(--card)}
+tbody td{padding:12px 10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+tbody td:first-child{border-left:1px solid var(--line);border-radius:var(--radius) 0 0 var(--radius)}
+tbody td:last-child{border-right:1px solid var(--line);border-radius:0 var(--radius) var(--radius) 0}
+.date{font-size:13px;color:var(--sub);white-space:nowrap;line-height:1.35}
+.date b{display:block;color:var(--text);font-weight:600;font-size:13.5px}
+.dplus{font-size:11px}
+.dplus.warn{color:var(--minus);font-weight:700}
+.name{font-weight:700;font-size:16px;letter-spacing:-.3px}
+.name input{font:inherit;font-weight:700;background:transparent;border:0;color:var(--text);width:100%;outline:none;padding:0}
+.qtybox{display:flex;align-items:center;justify-content:flex-end;gap:6px}
+.rnd{
+  width:38px;height:38px;flex:0 0 38px;border-radius:50%;border:0;color:#fff;font-size:20px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;line-height:1
+}
+.rnd.minus{background:var(--minus)}
+.rnd.plus{background:var(--plus)}
+.rnd:disabled{opacity:.3}
+.qty{
+  min-width:62px;text-align:center;font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;
+  background:transparent;border:0;color:var(--text);outline:none;padding:4px 0
+}
+.qty.zero{color:var(--minus)}
+.unit{font-size:11px;color:var(--sub);margin-left:-4px}
+.del{border:0;background:transparent;color:var(--sub);font-size:16px;padding:6px;cursor:pointer}
+.empty{text-align:center;color:var(--sub);padding:40px 10px;font-size:14px}
+
+.fabbar{
+  position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center
+}
+.fabbar .inner{max-width:720px;width:100%;margin:0 auto;display:flex;gap:8px}
+.btn{
+  flex:1;padding:14px 10px;border-radius:var(--radius);border:1px solid var(--line);background:var(--card);
+  color:var(--text);font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px
+}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#3a2c00}
+.btn.primary.dirty{box-shadow:0 0 0 3px rgba(245,179,1,.25)}
+.btn:disabled{opacity:.5}
+
+dialog{
+  border:0;border-radius:18px;padding:0;background:var(--card);color:var(--text);width:min(440px,92vw);
+  box-shadow:0 16px 50px rgba(0,0,0,.25)
+}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg{padding:18px}
+.dlg h2{margin:0 0 14px;font-size:18px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--sub);font-weight:700;margin-bottom:5px}
+.field input,.field select{
+  width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--bg);color:var(--text);font-size:16px;outline:none
+}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.dlgbtns{display:flex;gap:8px;margin-top:16px}
+.hint{font-size:11.5px;color:var(--sub);line-height:1.6;margin-top:4px}
+.hint a{color:var(--accent-dark)}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:100px;background:#2c2a26;color:#fff;
+  padding:11px 18px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;
+  transition:opacity .25s;z-index:99;max-width:88vw;text-align:center
+}
+.toast.show{opacity:.95}
+.toast.err{background:var(--danger)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🍼 이유식 식재료</h1>
+    <button class="icon-btn" id="btnSettings" title="설정">⚙️</button>
+  </header>
+  <div class="status"><span class="sync-dot" id="dot"></span><span id="statusText">불러오는 중…</span></div>
+
+  <div class="toolbar">
+    <div class="search">
+      <span class="mag">🔍</span>
+      <input id="q" type="search" placeholder="재료 검색 (예: 소고기)" autocomplete="off">
+      <button class="clr" id="qclr" style="display:none">✕</button>
+    </div>
+    <div class="chips">
+      <span class="chip small" style="border:0;background:transparent;padding-left:2px">정렬</span>
+      <button class="chip" data-sort="date">날짜</button>
+      <button class="chip" data-sort="name">재료</button>
+      <button class="chip on" data-sort="qty">재고</button>
+      <button class="chip" id="dirBtn" title="오름/내림">↓</button>
+      <span class="spacer"></span>
+      <span class="chip small" style="border:0;background:transparent">±</span>
+      <button class="chip small on" data-step="5">5g</button>
+      <button class="chip small" data-step="10">10g</button>
+      <button class="chip small" data-step="30">30g</button>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:86px">구매일</th>
+        <th>재료</th>
+        <th class="num" style="width:190px">재고 (g)</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="empty" id="empty" style="display:none">표시할 재료가 없어요.</div>
+</div>
+
+<div class="fabbar"><div class="inner">
+  <button class="btn" id="btnAdd">＋ 재료 추가</button>
+  <button class="btn" id="btnPull">⤓ 불러오기</button>
+  <button class="btn primary" id="btnPush">⤒ 커밋 &amp; 푸시</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<!-- 재료 추가 -->
+<dialog id="dlgAdd"><form method="dialog" class="dlg" id="formAdd">
+  <h2>재료 추가</h2>
+  <div class="field"><label>재료명</label><input id="fName" required placeholder="예: 소고기"></div>
+  <div class="row">
+    <div class="field"><label>구매일</label><input id="fDate" type="date" required></div>
+    <div class="field"><label>수량 (g)</label><input id="fQty" type="number" inputmode="numeric" step="5" min="0" value="90" required></div>
+  </div>
+  <div class="dlgbtns">
+    <button class="btn" type="button" id="addCancel">취소</button>
+    <button class="btn primary" type="submit">추가</button>
+  </div>
+</form></dialog>
+
+<!-- 설정 -->
+<dialog id="dlgSet"><form method="dialog" class="dlg" id="formSet">
+  <h2>⚙️ 동기화 설정</h2>
+  <div class="field">
+    <label>GitHub 저장소</label>
+    <input id="sRepo" placeholder="owner/repo">
+  </div>
+  <div class="field">
+    <label>GitHub 토큰 (Personal Access Token)</label>
+    <input id="sToken" type="password" placeholder="ghp_… 또는 github_pat_…" autocomplete="off">
+    <div class="hint">
+      이 기기의 브라우저에만 저장되며 서버로 전송되지 않습니다. 아이폰·아이패드에서도
+      한 번만 붙여넣으면 이후 계속 동기화됩니다.<br>
+      토큰 발급: <a href="https://github.com/settings/tokens/new?scopes=repo&description=baby-food-inventory" target="_blank" rel="noopener">github.com/settings/tokens</a>
+      (권한: <b>repo</b> 또는 이 저장소의 <b>Contents: Read and write</b>)
+    </div>
+  </div>
+  <div class="field">
+    <label>자동 저장</label>
+    <select id="sAuto">
+      <option value="off">끔 (직접 커밋&amp;푸시 버튼 사용)</option>
+      <option value="on">켬 (변경 후 8초 뒤 자동 푸시)</option>
+    </select>
+  </div>
+  <div class="dlgbtns">
+    <button class="btn" type="button" id="setClose">닫기</button>
+    <button class="btn primary" type="submit">저장</button>
+  </div>
+</form></dialog>
+
+<script>
+"use strict";
+/* ---------- 설정 ---------- */
+var LS = {
+  data:  'bfi.data',
+  token: 'bfi.token',
+  repo:  'bfi.repo',
+  auto:  'bfi.auto',
+  sort:  'bfi.sort',
+  step:  'bfi.step',
+  sha:   'bfi.sha',
+  dirty: 'bfi.dirty'
+};
+var DEFAULT_REPO = (location.hostname.endsWith('github.io') && location.pathname.split('/')[1])
+  ? location.hostname.split('.')[0] + '/' + location.pathname.split('/')[1]
+  : 'whysosary-dot/baby-food-inventory';
+
+var state = { items: [], updatedAt: null };
+var sha = localStorage.getItem(LS.sha) || null;
+var dirty = localStorage.getItem(LS.dirty) === '1';
+var sort = JSON.parse(localStorage.getItem(LS.sort) || '{"key":"qty","dir":1}');
+var step = parseInt(localStorage.getItem(LS.step) || '5', 10);
+var query = '';
+var autoTimer = null;
+
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+function getToken(){ return localStorage.getItem(LS.token) || ''; }
+function getRepo(){ return localStorage.getItem(LS.repo) || DEFAULT_REPO; }
+
+/* ---------- 유틸 ---------- */
+function todayStr(){
+  var d = new Date(Date.now() + 9*3600*1000); // KST
+  return d.toISOString().slice(0,10);
+}
+function daysSince(ds){
+  if(!ds) return null;
+  var a = new Date(ds + 'T00:00:00+09:00').getTime();
+  var b = new Date(todayStr() + 'T00:00:00+09:00').getTime();
+  return Math.round((b-a)/86400000);
+}
+function uid(){ return 'i' + Date.now().toString(36) + Math.floor(Math.random()*1e4).toString(36); }
+function b64encode(str){
+  var bytes = new TextEncoder().encode(str), bin = '';
+  for (var i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function b64decode(b64){
+  var bin = atob(b64.replace(/\s/g,'')), bytes = new Uint8Array(bin.length);
+  for (var i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder('utf-8').decode(bytes);
+}
+var toastTimer;
+function toast(msg, isErr){
+  var t = $('#toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.className = 'toast'; }, isErr ? 4500 : 2200);
+}
+function fmtTime(iso){
+  if(!iso) return '';
+  try{
+    return new Date(iso).toLocaleString('ko-KR',{timeZone:'Asia/Seoul',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  }catch(e){ return iso; }
+}
+
+/* ---------- 로컬 저장 / 상태표시 ---------- */
+function saveLocal(markDirty){
+  if (markDirty !== false){ dirty = true; localStorage.setItem(LS.dirty,'1'); }
+  localStorage.setItem(LS.data, JSON.stringify(state));
+  renderStatus();
+  if (markDirty !== false) scheduleAuto();
+}
+function renderStatus(){
+  var dot = $('#dot'), txt = $('#statusText'), push = $('#btnPush');
+  if (dirty){
+    dot.className = 'sync-dot dirty';
+    txt.textContent = '저장 안 된 변경사항이 있어요 · 마지막 동기화 ' + (fmtTime(state.updatedAt) || '없음');
+    push.classList.add('dirty');
+  } else {
+    dot.className = 'sync-dot clean';
+    txt.textContent = 'GitHub와 동기화됨 · ' + (fmtTime(state.updatedAt) || '-');
+    push.classList.remove('dirty');
+  }
+}
+function scheduleAuto(){
+  if (localStorage.getItem(LS.auto) !== 'on') return;
+  clearTimeout(autoTimer);
+  autoTimer = setTimeout(function(){ push(true); }, 8000);
+}
+
+/* ---------- 렌더 ---------- */
+function visibleItems(){
+  var q = query.trim().toLowerCase();
+  var arr = state.items.filter(function(it){
+    return !q || (it.name||'').toLowerCase().indexOf(q) >= 0;
+  });
+  var k = sort.key, d = sort.dir;
+  arr.sort(function(a,b){
+    var r;
+    if (k === 'name') r = (a.name||'').localeCompare(b.name||'', 'ko');
+    else if (k === 'qty') r = (a.qty||0) - (b.qty||0);
+    else r = String(a.date||'').localeCompare(String(b.date||''));
+    if (r === 0) r = (a.name||'').localeCompare(b.name||'', 'ko');
+    return r * d;
+  });
+  return arr;
+}
+
+function render(){
+  var arr = visibleItems();
+  var tb = $('#tbody');
+  tb.innerHTML = '';
+  $('#empty').style.display = arr.length ? 'none' : 'block';
+
+  arr.forEach(function(it){
+    var tr = document.createElement('tr');
+    var ds = daysSince(it.date);
+    var dtxt = ds === null ? '' : (ds === 0 ? '오늘' : 'D+' + ds);
+    var warn = (ds !== null && ds >= 5) ? ' warn' : '';
+
+    var td1 = document.createElement('td');
+    td1.className = 'date';
+    var dInput = document.createElement('input');
+    dInput.type = 'date'; dInput.value = it.date || '';
+    dInput.style.cssText = 'font:inherit;font-weight:600;color:var(--text);background:transparent;border:0;width:100%;padding:0;outline:none';
+    dInput.onchange = function(){ it.date = dInput.value; saveLocal(); render(); };
+    var dSpan = document.createElement('span');
+    dSpan.className = 'dplus' + warn; dSpan.textContent = dtxt;
+    td1.appendChild(dInput); td1.appendChild(dSpan);
+
+    var td2 = document.createElement('td');
+    td2.className = 'name';
+    var nInput = document.createElement('input');
+    nInput.value = it.name || '';
+    nInput.onchange = function(){ it.name = nInput.value.trim(); saveLocal(); render(); };
+    td2.appendChild(nInput);
+
+    var td3 = document.createElement('td');
+    var box = document.createElement('div');
+    box.className = 'qtybox';
+
+    var minus = document.createElement('button');
+    minus.className = 'rnd minus'; minus.textContent = '−';
+    minus.disabled = (it.qty || 0) <= 0;
+    minus.onclick = function(){ it.qty = Math.max(0, (it.qty||0) - step); saveLocal(); render(); };
+
+    var qIn = document.createElement('input');
+    qIn.className = 'qty' + ((it.qty||0) === 0 ? ' zero' : '');
+    qIn.type = 'number'; qIn.inputMode = 'numeric'; qIn.value = it.qty || 0;
+    qIn.onchange = function(){ it.qty = Math.max(0, parseInt(qIn.value||'0',10) || 0); saveLocal(); render(); };
+
+    var plus = document.createElement('button');
+    plus.className = 'rnd plus'; plus.textContent = '+';
+    plus.onclick = function(){ it.qty = (it.qty||0) + step; saveLocal(); render(); };
+
+    var del = document.createElement('button');
+    del.className = 'del'; del.textContent = '🗑';
+    del.onclick = function(){
+      if (confirm('"' + it.name + '" 을(를) 삭제할까요?')){
+        state.items = state.items.filter(function(x){ return x.id !== it.id; });
+        saveLocal(); render();
+      }
+    };
+
+    box.appendChild(minus); box.appendChild(qIn); box.appendChild(plus); box.appendChild(del);
+    td3.appendChild(box);
+
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+    tb.appendChild(tr);
+  });
+  renderStatus();
+}
+
+/* ---------- GitHub 동기화 ---------- */
+function apiUrl(){ return 'https://api.github.com/repos/' + getRepo() + '/contents/data.json'; }
+
+function normalize(obj){
+  var items = (obj && obj.items) || [];
+  return {
+    updatedAt: (obj && obj.updatedAt) || null,
+    items: items.map(function(it){
+      return { id: it.id || uid(), name: it.name || '', qty: Number(it.qty)||0, date: it.date || '' };
+    })
+  };
+}
+
+async function pull(silent){
+  var tk = getToken();
+  try{
+    var res, json, text;
+    if (tk){
+      res = await fetch(apiUrl() + '?ref=' + encodeURIComponent('main') + '&t=' + Date.now(), {
+        headers: { 'Authorization':'Bearer ' + tk, 'Accept':'application/vnd.github+json', 'Cache-Control':'no-cache' }
+      });
+      if (res.status === 404) throw new Error('저장소 또는 data.json을 찾을 수 없어요 (' + getRepo() + ')');
+      if (res.status === 401) throw new Error('토큰이 올바르지 않아요. 설정에서 다시 입력해 주세요.');
+      if (!res.ok) throw new Error('불러오기 실패 (' + res.status + ')');
+      json = await res.json();
+      sha = json.sha; localStorage.setItem(LS.sha, sha);
+      text = b64decode(json.content);
+    } else {
+      res = await fetch('data.json?t=' + Date.now(), { cache:'no-store' });
+      if (!res.ok) throw new Error('data.json을 불러오지 못했어요');
+      text = await res.text();
+    }
+    state = normalize(JSON.parse(text));
+    dirty = false; localStorage.setItem(LS.dirty,'0');
+    localStorage.setItem(LS.data, JSON.stringify(state));
+    render();
+    if (!silent) toast('GitHub에서 불러왔어요');
+  }catch(e){
+    if (!silent) toast(e.message, true);
+    renderStatus();
+  }
+}
+
+async function push(isAuto){
+  var tk = getToken();
+  if (!tk){ openSettings(); toast('먼저 GitHub 토큰을 입력해 주세요', true); return; }
+  var btn = $('#btnPush');
+  btn.disabled = true; btn.textContent = '⏳ 푸시 중…';
+  try{
+    // 최신 sha 확보 (다른 기기에서 먼저 저장했을 수 있음)
+    var head = await fetch(apiUrl() + '?ref=main&t=' + Date.now(), {
+      headers: { 'Authorization':'Bearer ' + tk, 'Accept':'application/vnd.github+json' }
+    });
+    if (head.ok){ var hj = await head.json(); sha = hj.sha; }
+    else if (head.status === 404){ sha = null; }
+    else if (head.status === 401){ throw new Error('토큰이 올바르지 않아요.'); }
+
+    state.updatedAt = new Date().toISOString();
+    var body = {
+      message: '재고 업데이트 ' + fmtTime(state.updatedAt),
+      content: b64encode(JSON.stringify({ updatedAt: state.updatedAt, step: step, items: state.items }, null, 2) + '\n'),
+      branch: 'main'
+    };
+    if (sha) body.sha = sha;
+
+    var res = await fetch(apiUrl(), {
+      method:'PUT',
+      headers:{ 'Authorization':'Bearer ' + tk, 'Accept':'application/vnd.github+json', 'Content-Type':'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok){
+      var err = await res.json().catch(function(){ return {}; });
+      throw new Error('푸시 실패 (' + res.status + ') ' + (err.message || ''));
+    }
+    var out = await res.json();
+    sha = out.content.sha; localStorage.setItem(LS.sha, sha);
+    dirty = false; localStorage.setItem(LS.dirty,'0');
+    localStorage.setItem(LS.data, JSON.stringify(state));
+    renderStatus();
+    toast(isAuto ? '자동 저장됨 ✓' : 'GitHub에 커밋 & 푸시 완료 ✓');
+  }catch(e){
+    toast(e.message, true);
+  }finally{
+    btn.disabled = false; btn.textContent = '⤒ 커밋 & 푸시';
+  }
+}
+
+/* ---------- 이벤트 ---------- */
+$('#q').addEventListener('input', function(e){
+  query = e.target.value;
+  $('#qclr').style.display = query ? 'block' : 'none';
+  render();
+});
+$('#qclr').addEventListener('click', function(){
+  query = ''; $('#q').value = ''; $('#qclr').style.display = 'none'; render();
+});
+
+$$('.chip[data-sort]').forEach(function(b){
+  b.addEventListener('click', function(){
+    if (sort.key === b.dataset.sort) sort.dir *= -1;
+    else { sort.key = b.dataset.sort; sort.dir = (b.dataset.sort === 'name') ? 1 : 1; }
+    localStorage.setItem(LS.sort, JSON.stringify(sort));
+    syncChips(); render();
+  });
+});
+$('#dirBtn').addEventListener('click', function(){
+  sort.dir *= -1; localStorage.setItem(LS.sort, JSON.stringify(sort)); syncChips(); render();
+});
+$$('.chip[data-step]').forEach(function(b){
+  b.addEventListener('click', function(){
+    step = parseInt(b.dataset.step,10);
+    localStorage.setItem(LS.step, String(step)); syncChips();
+  });
+});
+function syncChips(){
+  $$('.chip[data-sort]').forEach(function(b){ b.classList.toggle('on', b.dataset.sort === sort.key); });
+  $$('.chip[data-step]').forEach(function(b){ b.classList.toggle('on', parseInt(b.dataset.step,10) === step); });
+  $('#dirBtn').textContent = sort.dir === 1 ? '↑' : '↓';
+}
+
+// 헤더 클릭 정렬
+$$('thead th').forEach(function(th, i){
+  var keys = ['date','name','qty'];
+  th.addEventListener('click', function(){
+    if (sort.key === keys[i]) sort.dir *= -1; else sort.key = keys[i];
+    localStorage.setItem(LS.sort, JSON.stringify(sort)); syncChips(); render();
+  });
+});
+
+$('#btnAdd').addEventListener('click', function(){
+  $('#fName').value = ''; $('#fDate').value = todayStr(); $('#fQty').value = 90;
+  $('#dlgAdd').showModal();
+  setTimeout(function(){ $('#fName').focus(); }, 50);
+});
+$('#addCancel').addEventListener('click', function(){ $('#dlgAdd').close(); });
+$('#formAdd').addEventListener('submit', function(){
+  var name = $('#fName').value.trim();
+  if (!name) return;
+  state.items.push({ id: uid(), name: name, qty: Math.max(0, parseInt($('#fQty').value||'0',10)||0), date: $('#fDate').value || todayStr() });
+  saveLocal(); render(); toast('추가했어요 — 커밋 & 푸시를 눌러 저장하세요');
+});
+
+function openSettings(){
+  $('#sRepo').value = getRepo();
+  $('#sToken').value = getToken();
+  $('#sAuto').value = localStorage.getItem(LS.auto) || 'off';
+  $('#dlgSet').showModal();
+}
+$('#btnSettings').addEventListener('click', openSettings);
+$('#setClose').addEventListener('click', function(){ $('#dlgSet').close(); });
+$('#formSet').addEventListener('submit', function(){
+  localStorage.setItem(LS.repo, $('#sRepo').value.trim() || DEFAULT_REPO);
+  localStorage.setItem(LS.token, $('#sToken').value.trim());
+  localStorage.setItem(LS.auto, $('#sAuto').value);
+  toast('설정을 저장했어요');
+  pull(true);
+});
+
+$('#btnPull').addEventListener('click', function(){
+  if (dirty && !confirm('저장하지 않은 변경사항이 사라집니다. 불러올까요?')) return;
+  pull(false);
+});
+$('#btnPush').addEventListener('click', function(){ push(false); });
+
+window.addEventListener('beforeunload', function(e){
+  if (dirty){ e.preventDefault(); e.returnValue = ''; }
+});
+
+/* ---------- 시작 ---------- */
+(function init(){
+  syncChips();
+  var cached = localStorage.getItem(LS.data);
+  if (cached){ try { state = normalize(JSON.parse(cached)); } catch(e){} }
+  render();
+  if (dirty){
+    renderStatus();
+    toast('저장 안 된 변경사항이 남아 있어요');
+  } else {
+    pull(true);
+  }
+  // 다른 기기에서 바뀌었을 수 있으니 앱 복귀 시 자동 새로고침
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'visible' && !dirty) pull(true);
+  });
+})();
+</script>
+</body>
+</html>
