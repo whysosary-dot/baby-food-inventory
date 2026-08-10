@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-10T10:37:00.486Z",
+  "updatedAt": "2026-08-10T10:37:40.141Z",
   "step": 5,
   "items": [
     {
@@ -7,7 +7,7 @@
       "name": "소고기",
       "qty": 30,
       "date": "2026-08-02",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "i2",
@@ -63,7 +63,7 @@
       "name": "쌀죽",
       "qty": 280,
       "date": "2026-08-02",
-      "pinned": false
+      "pinned": true
     }
   ]
 }
