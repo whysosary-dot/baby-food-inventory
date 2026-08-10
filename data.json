@@ -1,14 +1,69 @@
 {
-  "updatedAt": "2026-08-10T16:17:00+09:00",
+  "updatedAt": "2026-08-10T10:37:00.486Z",
   "step": 5,
   "items": [
-    { "id": "i1", "name": "소고기",   "qty": 30, "date": "2026-08-10" },
-    { "id": "i2", "name": "양배추",   "qty": 30, "date": "2026-08-10" },
-    { "id": "i3", "name": "애호박",   "qty": 90, "date": "2026-08-10" },
-    { "id": "i4", "name": "브로콜리", "qty": 90, "date": "2026-08-10" },
-    { "id": "i5", "name": "사과",     "qty": 50, "date": "2026-08-10" },
-    { "id": "i6", "name": "단호박",   "qty": 90, "date": "2026-08-10" },
-    { "id": "i7", "name": "배",       "qty": 90, "date": "2026-08-10" },
-    { "id": "i8", "name": "청경채",   "qty": 90, "date": "2026-08-10" }
+    {
+      "id": "i1",
+      "name": "소고기",
+      "qty": 30,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i2",
+      "name": "양배추",
+      "qty": 20,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i3",
+      "name": "애호박",
+      "qty": 90,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i4",
+      "name": "브로콜리",
+      "qty": 90,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i5",
+      "name": "사과",
+      "qty": 50,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i6",
+      "name": "단호박",
+      "qty": 90,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i7",
+      "name": "배",
+      "qty": 90,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "i8",
+      "name": "청경채",
+      "qty": 90,
+      "date": "2026-08-02",
+      "pinned": false
+    },
+    {
+      "id": "imsn172qy3zh",
+      "name": "쌀죽",
+      "qty": 280,
+      "date": "2026-08-02",
+      "pinned": false
+    }
   ]
 }
