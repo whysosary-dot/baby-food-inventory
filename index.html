@@ -59,17 +59,23 @@ header h1{font-size:21px;margin:0;font-weight:800;letter-spacing:-.5px;flex:1;mi
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
   padding:10px 10px 10px 12px;display:flex;align-items:center;gap:8px
 }
+.row.pinned{border-left:3px solid var(--accent);padding-left:10px}
 .left{flex:1;min-width:0}
 .nm input{
   font:inherit;font-size:16.5px;font-weight:700;letter-spacing:-.3px;background:transparent;border:0;
   color:var(--text);width:100%;outline:none;padding:0;text-overflow:ellipsis
 }
-.sub{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:11.5px;color:var(--sub)}
+.sub{display:flex;align-items:center;gap:8px;margin-top:3px;font-size:11.5px;color:var(--sub);flex-wrap:nowrap;white-space:nowrap}
 .dwrap{position:relative;display:inline-flex;align-items:center;font-weight:600}
 .dwrap input{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;cursor:pointer}
 .dplus{font-size:11px}
 .dplus.warn{color:var(--minus);font-weight:800}
-.del{border:0;background:transparent;color:var(--sub);font-size:12px;padding:2px 4px;cursor:pointer;opacity:.75}
+.del{border:0;background:transparent;color:var(--sub);font-size:14px;line-height:1;padding:3px 4px;cursor:pointer;opacity:.42;filter:grayscale(1)}
+.del.on{opacity:1;filter:none}
+.resort{
+  width:100%;margin-bottom:8px;padding:9px;border-radius:var(--radius);border:1px dashed var(--accent);
+  background:var(--card);color:var(--accent-dark);font-size:12.5px;font-weight:700;cursor:pointer
+}
 
 .ctrl{display:flex;align-items:center;gap:5px;flex:0 0 auto}
 .rnd{
@@ -151,6 +157,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
     <button class="chip" data-step="30">30g</button>
   </div>
 
+  <button class="resort" id="resortBtn" style="display:none">↕ 바뀐 값으로 정렬 다시 적용</button>
   <div class="list" id="list"></div>
   <div class="empty" id="empty" style="display:none">표시할 재료가 없어요.</div>
 </div>
@@ -283,6 +290,7 @@ function visibleItems(){
   var k = sort.key, d = sort.dir;
   arr.sort(function(a,b){
     var r;
+    if (!!a.pinned !== !!b.pinned) return a.pinned ? -1 : 1;   // 고정된 항목은 항상 위
     if (k === 'name') r = (a.name||'').localeCompare(b.name||'', 'ko');
     else if (k === 'qty') r = (a.qty||0) - (b.qty||0);
     else r = String(a.date||'').localeCompare(String(b.date||''));
@@ -292,21 +300,30 @@ function visibleItems(){
   return arr;
 }
 
+var renderedIds = [];
+function markResort(){
+  var ids = visibleItems().map(function(i){ return i.id; });
+  var same = ids.length === renderedIds.length && ids.every(function(v,i){ return v === renderedIds[i]; });
+  $('#resortBtn').style.display = same ? 'none' : 'block';
+}
+
 function render(){
   var arr = visibleItems(), list = $('#list');
   list.innerHTML = '';
+  renderedIds = arr.map(function(i){ return i.id; });
+  $('#resortBtn').style.display = 'none';
   $('#empty').style.display = arr.length ? 'none' : 'block';
 
   arr.forEach(function(it){
     var ds = daysSince(it.date);
-    var row = document.createElement('div'); row.className = 'row';
+    var row = document.createElement('div'); row.className = 'row' + (it.pinned ? ' pinned' : '');
 
     var left = document.createElement('div'); left.className = 'left';
 
     var nm = document.createElement('div'); nm.className = 'nm';
     var nIn = document.createElement('input');
     nIn.value = it.name || ''; nIn.setAttribute('aria-label','재료명');
-    nIn.onchange = function(){ it.name = nIn.value.trim(); saveLocal(); render(); };
+    nIn.onchange = function(){ it.name = nIn.value.trim(); saveLocal(); };
     nm.appendChild(nIn);
 
     var sub = document.createElement('div'); sub.className = 'sub';
@@ -315,22 +332,42 @@ function render(){
     dtxt.textContent = it.date ? it.date.slice(2).replace(/-/g,'.') : '날짜 없음';
     var dIn = document.createElement('input');
     dIn.type = 'date'; dIn.value = it.date || ''; dIn.setAttribute('aria-label','구매일');
-    dIn.onchange = function(){ it.date = dIn.value; saveLocal(); render(); };
+    dIn.onchange = function(){ it.date = dIn.value; saveLocal(); refresh(); };
     dw.appendChild(dtxt); dw.appendChild(dIn);
 
     var dp = document.createElement('span');
     dp.className = 'dplus' + (ds !== null && ds >= 5 ? ' warn' : '');
     dp.textContent = ds === null ? '' : (ds === 0 ? '오늘' : 'D+' + ds);
 
+    // 값만 갱신 — 목록 순서는 그대로 두어 연속 조작 시 행이 튀지 않게 한다
+    function refresh(){
+      var d2 = daysSince(it.date);
+      dtxt.textContent = it.date ? it.date.slice(2).replace(/-/g,'.') : '날짜 없음';
+      dp.className = 'dplus' + (d2 !== null && d2 >= 5 ? ' warn' : '');
+      dp.textContent = d2 === null ? '' : (d2 === 0 ? '오늘' : 'D+' + d2);
+      qIn.value = it.qty || 0;
+      qIn.className = 'qty' + ((it.qty||0) === 0 ? ' zero' : '');
+      minus.disabled = (it.qty||0) <= 0;
+      renderStatus();
+      markResort();
+    }
+
+    var pin = document.createElement('button');
+    pin.className = 'del' + (it.pinned ? ' on' : ''); pin.type = 'button';
+    pin.textContent = '📌'; pin.title = it.pinned ? '상단 고정 해제' : '상단에 고정';
+    pin.setAttribute('aria-label', pin.title);
+    pin.onclick = function(){ it.pinned = !it.pinned; saveLocal(); render(); };
+
     var del = document.createElement('button');
-    del.className = 'del'; del.type = 'button'; del.textContent = '🗑 삭제';
+    del.className = 'del'; del.type = 'button'; del.textContent = '🗑';
+    del.title = '삭제'; del.setAttribute('aria-label','삭제');
     del.onclick = function(){
       if (confirm('"' + (it.name||'') + '" 을(를) 삭제할까요?')){
         state.items = state.items.filter(function(x){ return x.id !== it.id; });
         saveLocal(); render();
       }
     };
-    sub.appendChild(dw); sub.appendChild(dp); sub.appendChild(del);
+    sub.appendChild(dw); sub.appendChild(dp); sub.appendChild(pin); sub.appendChild(del);
 
     left.appendChild(nm); left.appendChild(sub);
 
@@ -338,17 +375,17 @@ function render(){
     var minus = document.createElement('button');
     minus.className = 'rnd minus'; minus.type = 'button'; minus.textContent = '−';
     minus.disabled = (it.qty||0) <= 0;
-    minus.onclick = function(){ it.qty = Math.max(0, (it.qty||0) - step); saveLocal(); render(); };
+    minus.onclick = function(){ it.qty = Math.max(0, (it.qty||0) - step); saveLocal(); refresh(); };
 
     var qIn = document.createElement('input');
     qIn.className = 'qty' + ((it.qty||0) === 0 ? ' zero' : '');
     qIn.type = 'number'; qIn.inputMode = 'numeric'; qIn.value = it.qty || 0;
     qIn.setAttribute('aria-label','재고(g)');
-    qIn.onchange = function(){ it.qty = Math.max(0, parseInt(qIn.value||'0',10) || 0); saveLocal(); render(); };
+    qIn.onchange = function(){ it.qty = Math.max(0, parseInt(qIn.value||'0',10) || 0); saveLocal(); refresh(); };
 
     var plus = document.createElement('button');
     plus.className = 'rnd plus'; plus.type = 'button'; plus.textContent = '+';
-    plus.onclick = function(){ it.qty = (it.qty||0) + step; saveLocal(); render(); };
+    plus.onclick = function(){ it.qty = (it.qty||0) + step; saveLocal(); refresh(); };
 
     ctrl.appendChild(minus); ctrl.appendChild(qIn); ctrl.appendChild(plus);
 
@@ -364,7 +401,7 @@ function normalize(obj){
   return {
     updatedAt: (obj && obj.updatedAt) || null,
     items: items.map(function(it){
-      return { id: it.id || uid(), name: it.name || '', qty: Number(it.qty)||0, date: it.date || '' };
+      return { id: it.id || uid(), name: it.name || '', qty: Number(it.qty)||0, date: it.date || '', pinned: !!it.pinned };
     })
   };
 }
@@ -457,6 +494,7 @@ $$('.chip[data-sort]').forEach(function(b){
     localStorage.setItem(LS.sort, JSON.stringify(sort)); syncChips(); render();
   });
 });
+$('#resortBtn').addEventListener('click', function(){ render(); });
 $('#dirBtn').addEventListener('click', function(){
   sort.dir *= -1; localStorage.setItem(LS.sort, JSON.stringify(sort)); syncChips(); render();
 });
@@ -482,7 +520,7 @@ $('#formAdd').addEventListener('submit', function(){
   if (!name) return;
   state.items.push({ id: uid(), name: name,
     qty: Math.max(0, parseInt($('#fQty').value||'0',10)||0),
-    date: $('#fDate').value || todayStr() });
+    date: $('#fDate').value || todayStr(), pinned: false });
   saveLocal(); render(); toast('추가했어요 — 커밋 & 푸시로 저장하세요');
 });
 
