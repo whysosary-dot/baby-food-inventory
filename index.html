@@ -156,8 +156,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 </div>
 
 <div class="fabbar"><div class="inner">
-  <button class="btn" id="btnAdd">＋ 재료</button>
-  <button class="btn" id="btnPull">↓ 불러오기</button>
+  <button class="btn" id="btnAdd">＋ 재료 추가</button>
   <button class="btn primary" id="btnPush">↑ 커밋 &amp; 푸시</button>
 </div></div>
 
@@ -195,6 +194,11 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
       <option value="off">끔 — 커밋 &amp; 푸시 버튼으로 저장</option>
       <option value="on">켬 — 변경 8초 뒤 자동 푸시</option>
     </select>
+  </div>
+  <div class="field" style="margin-bottom:0">
+    <label>복구</label>
+    <button class="btn" type="button" id="btnPull" style="width:100%;flex:none">↓ GitHub에서 최신 상태로 되돌리기</button>
+    <div class="hint">평소엔 앱을 열 때 자동으로 최신 데이터를 불러옵니다. 이 버튼은 이 기기의 변경사항을 버리고 강제로 다시 받아올 때만 쓰세요.</div>
   </div>
   <div class="dlgbtns">
     <button class="btn" type="button" id="setClose">닫기</button>
@@ -498,7 +502,8 @@ $('#formSet').addEventListener('submit', function(){
   if (!dirty) pull(true);
 });
 $('#btnPull').addEventListener('click', function(){
-  if (dirty && !confirm('저장하지 않은 변경사항이 사라집니다. 불러올까요?')) return;
+  if (dirty && !confirm('이 기기에서 저장하지 않은 변경사항이 사라집니다. 계속할까요?')) return;
+  $('#dlgSet').close();
   pull(false);
 });
 $('#btnPush').addEventListener('click', function(){ push(false); });
@@ -514,6 +519,8 @@ window.addEventListener('beforeunload', function(e){ if (dirty){ e.preventDefaul
   document.addEventListener('visibilitychange', function(){
     if (document.visibilityState === 'visible' && !dirty) pull(true);
   });
+  window.addEventListener('focus', function(){ if (!dirty) pull(true); });
+  window.addEventListener('online', function(){ if (!dirty) pull(true); });
 })();
 </script>
 </body>
