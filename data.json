@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-11T11:54:34.320Z",
+  "updatedAt": "2026-08-11T11:54:59.258Z",
   "step": 5,
   "items": [
     {
@@ -56,14 +56,14 @@
       "name": "소고기1",
       "qty": 90,
       "date": "2026-08-11",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "imsokc16a24i",
       "name": "소고기2",
       "qty": 90,
       "date": "2026-08-11",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "imsokc6wi4p3",
@@ -88,7 +88,7 @@
     },
     {
       "id": "imsolp79x2vv",
-      "name": "쌀큐브",
+      "name": "쌀죽",
       "qty": 1440,
       "date": "2026-08-11",
       "pinned": true
