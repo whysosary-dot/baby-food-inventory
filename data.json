@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-11T02:52:53.151Z",
+  "updatedAt": "2026-08-11T02:54:00.738Z",
   "step": 5,
   "items": [
     {
@@ -12,7 +12,7 @@
     {
       "id": "i2",
       "name": "양배추",
-      "qty": 20,
+      "qty": 0,
       "date": "2026-08-02",
       "pinned": false
     },
@@ -54,14 +54,14 @@
     {
       "id": "i8",
       "name": "청경채",
-      "qty": 90,
+      "qty": 80,
       "date": "2026-08-02",
       "pinned": false
     },
     {
       "id": "imsn172qy3zh",
       "name": "쌀죽",
-      "qty": 280,
+      "qty": 240,
       "date": "2026-08-02",
       "pinned": true
     }
