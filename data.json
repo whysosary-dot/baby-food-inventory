@@ -1,21 +1,7 @@
 {
-  "updatedAt": "2026-08-11T02:54:00.738Z",
+  "updatedAt": "2026-08-11T11:54:34.320Z",
   "step": 5,
   "items": [
-    {
-      "id": "i1",
-      "name": "소고기",
-      "qty": 10,
-      "date": "2026-08-02",
-      "pinned": true
-    },
-    {
-      "id": "i2",
-      "name": "양배추",
-      "qty": 0,
-      "date": "2026-08-02",
-      "pinned": false
-    },
     {
       "id": "i3",
       "name": "애호박",
@@ -64,6 +50,69 @@
       "qty": 240,
       "date": "2026-08-02",
       "pinned": true
+    },
+    {
+      "id": "imsokbvg42oc",
+      "name": "소고기1",
+      "qty": 90,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsokc16a24i",
+      "name": "소고기2",
+      "qty": 90,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsokc6wi4p3",
+      "name": "오이",
+      "qty": 180,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsokci0lp1",
+      "name": "감자",
+      "qty": 180,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsokcpht2g6",
+      "name": "양배추1",
+      "qty": 90,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsolp79x2vv",
+      "name": "쌀큐브",
+      "qty": 1440,
+      "date": "2026-08-11",
+      "pinned": true
+    },
+    {
+      "id": "imsolqmgq1nw",
+      "name": "오트밀미음",
+      "qty": 240,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsolro1247",
+      "name": "고구마스틱",
+      "qty": 60,
+      "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsolrsnujg",
+      "name": "애호박스틱",
+      "qty": 60,
+      "date": "2026-08-11",
+      "pinned": false
     }
   ]
 }
