@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-08-11T11:58:12.389Z",
-  "step": 5,
+  "updatedAt": "2026-08-12T04:41:47.298Z",
+  "step": 10,
   "items": [
     {
       "id": "i3",
@@ -40,21 +40,21 @@
     {
       "id": "i8",
       "name": "청경채",
-      "qty": 60,
+      "qty": 40,
       "date": "2026-08-02",
       "pinned": false
     },
     {
       "id": "imsn172qy3zh",
       "name": "쌀죽",
-      "qty": 200,
+      "qty": 160,
       "date": "2026-08-02",
       "pinned": true
     },
     {
       "id": "imsokbvg42oc",
       "name": "소고기1",
-      "qty": 90,
+      "qty": 70,
       "date": "2026-08-11",
       "pinned": true
     },
@@ -75,7 +75,7 @@
     {
       "id": "imsokci0lp1",
       "name": "감자",
-      "qty": 180,
+      "qty": 160,
       "date": "2026-08-11",
       "pinned": false
     },
