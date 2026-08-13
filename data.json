@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-12T04:42:43.105Z",
+  "updatedAt": "2026-08-13T15:22:06.180Z",
   "step": 10,
   "items": [
     {
@@ -47,23 +47,23 @@
     {
       "id": "imsn172qy3zh",
       "name": "쌀죽",
-      "qty": 160,
+      "qty": 80,
       "date": "2026-08-02",
-      "pinned": true
+      "pinned": false
     },
     {
       "id": "imsokbvg42oc",
       "name": "소고기1",
-      "qty": 70,
+      "qty": 30,
       "date": "2026-08-11",
-      "pinned": true
+      "pinned": false
     },
     {
       "id": "imsokc16a24i",
       "name": "소고기2",
       "qty": 90,
       "date": "2026-08-11",
-      "pinned": true
+      "pinned": false
     },
     {
       "id": "imsokc6wi4p3",
@@ -75,14 +75,14 @@
     {
       "id": "imsokci0lp1",
       "name": "감자",
-      "qty": 160,
+      "qty": 140,
       "date": "2026-08-11",
       "pinned": false
     },
     {
       "id": "imsokcpht2g6",
       "name": "양배추1",
-      "qty": 90,
+      "qty": 80,
       "date": "2026-08-11",
       "pinned": false
     },
@@ -91,7 +91,7 @@
       "name": "쌀죽",
       "qty": 1440,
       "date": "2026-08-11",
-      "pinned": true
+      "pinned": false
     },
     {
       "id": "imsolqmgq1nw",
@@ -112,6 +112,34 @@
       "name": "애호박스틱",
       "qty": 60,
       "date": "2026-08-11",
+      "pinned": false
+    },
+    {
+      "id": "imsrnwj1f27p",
+      "name": "소고기1",
+      "qty": 180,
+      "date": "2026-08-14",
+      "pinned": false
+    },
+    {
+      "id": "imsrnwwij602",
+      "name": "소고기2",
+      "qty": 90,
+      "date": "2026-08-14",
+      "pinned": false
+    },
+    {
+      "id": "imsrnx83t598",
+      "name": "비타민",
+      "qty": 90,
+      "date": "2026-08-14",
+      "pinned": false
+    },
+    {
+      "id": "imsrnxbmp41w",
+      "name": "고구마",
+      "qty": 90,
+      "date": "2026-08-14",
       "pinned": false
     }
   ]
