@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-13T15:22:06.180Z",
+  "updatedAt": "2026-08-14T04:47:24.768Z",
   "step": 10,
   "items": [
     {
@@ -12,9 +12,9 @@
     {
       "id": "i4",
       "name": "브로콜리",
-      "qty": 90,
+      "qty": 80,
       "date": "2026-08-02",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "i5",
@@ -47,23 +47,23 @@
     {
       "id": "imsn172qy3zh",
       "name": "쌀죽",
-      "qty": 80,
+      "qty": 40,
       "date": "2026-08-02",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "imsokbvg42oc",
       "name": "소고기1",
-      "qty": 30,
+      "qty": 20,
       "date": "2026-08-11",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "imsokc16a24i",
       "name": "소고기2",
-      "qty": 90,
+      "qty": 80,
       "date": "2026-08-11",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "imsokc6wi4p3",
@@ -82,9 +82,9 @@
     {
       "id": "imsokcpht2g6",
       "name": "양배추1",
-      "qty": 80,
+      "qty": 70,
       "date": "2026-08-11",
-      "pinned": false
+      "pinned": true
     },
     {
       "id": "imsolp79x2vv",
