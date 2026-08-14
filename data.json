@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-14T04:47:24.768Z",
+  "updatedAt": "2026-08-14T08:25:39.718Z",
   "step": 10,
   "items": [
     {
@@ -12,7 +12,7 @@
     {
       "id": "i4",
       "name": "브로콜리",
-      "qty": 80,
+      "qty": 70,
       "date": "2026-08-02",
       "pinned": true
     },
@@ -47,21 +47,21 @@
     {
       "id": "imsn172qy3zh",
       "name": "쌀죽",
-      "qty": 40,
+      "qty": 0,
       "date": "2026-08-02",
       "pinned": true
     },
     {
       "id": "imsokbvg42oc",
       "name": "소고기1",
-      "qty": 20,
+      "qty": 10,
       "date": "2026-08-11",
       "pinned": true
     },
     {
       "id": "imsokc16a24i",
       "name": "소고기2",
-      "qty": 80,
+      "qty": 70,
       "date": "2026-08-11",
       "pinned": true
     },
@@ -75,7 +75,7 @@
     {
       "id": "imsokci0lp1",
       "name": "감자",
-      "qty": 140,
+      "qty": 130,
       "date": "2026-08-11",
       "pinned": false
     },
